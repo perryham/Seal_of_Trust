@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Seal of Trust Framework | Perry Ham</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A96E;
+    --gold-light: #E8D5A8;
+    --gold-dark: #8B6D3F;
+    --navy: #0A1628;
+    --navy-mid: #152238;
+    --navy-light: #1E3050;
+    --slate: #94A3B8;
+    --silver: #CBD5E1;
+    --white: #F1F5F9;
+    --platinum: #E2E8F0;
+    --bronze: #CD7F32;
+    --silver-medal: #A8B5C4;
+    --gold-medal: #D4AF37;
+    --platinum-medal: #B8C5D6;
+    --accent-teal: #2DD4BF;
+    --glow: rgba(201, 169, 110, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold-dark) var(--navy);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--silver);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* === HERO === */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    padding: 2rem;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, var(--glow) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    width: 120px;
+    height: 120px;
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 3rem;
+    position: relative;
+    animation: fadeInScale 1.2s ease-out;
+  }
+
+  .hero-badge::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border: 1px solid rgba(201, 169, 110, 0.3);
+    border-radius: 50%;
+    animation: pulse-ring 3s ease-in-out infinite;
+  }
+
+  .hero-badge svg {
+    width: 48px;
+    height: 48px;
+    fill: var(--gold);
+  }
+
+  .hero-kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 0.8s ease-out 0.3s both;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 6vw, 5.5rem);
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+    animation: fadeInUp 0.8s ease-out 0.5s both;
+  }
+
+  .hero h1 em {
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  .hero-sub {
+    font-size: 1.15rem;
+    font-weight: 300;
+    color: var(--slate);
+    max-width: 560px;
+    margin: 1.5rem auto 2.5rem;
+    animation: fadeInUp 0.8s ease-out 0.7s both;
+  }
+
+  .hero-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: fadeInUp 0.8s ease-out 0.9s both;
+  }
+
+  .hero-author-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 1rem;
+  }
+
+  .hero-author-info {
+    text-align: left;
+  }
+
+  .hero-author-name {
+    font-weight: 600;
+    color: var(--white);
+    font-size: 0.95rem;
+  }
+
+  .hero-author-title {
+    font-size: 0.8rem;
+    color: var(--slate);
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    animation: fadeInUp 0.8s ease-out 1.2s both;
+  }
+
+  .scroll-indicator span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scroll-pulse 2s ease-in-out infinite;
+  }
+
+  /* === SECTIONS === */
+  .section {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 6rem 2rem;
+    position: relative;
+  }
+
+  .section-wide {
+    max-width: 1000px;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .section-label::before {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 2rem;
+  }
+
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--gold-light);
+    margin: 2.5rem 0 1rem;
+  }
+
+  p {
+    margin-bottom: 1.25rem;
+    font-size: 1.02rem;
+  }
+
+  .lead {
+    font-size: 1.15rem;
+    color: var(--platinum);
+    font-weight: 300;
+    border-left: 2px solid var(--gold);
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  /* === TIER CARDS === */
+  .tier-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    margin: 3rem 0;
+  }
+
+  .tier-card {
+    background: var(--navy-mid);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: 12px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.4s ease, border-color 0.4s ease;
+  }
+
+  .tier-card:hover {
+    transform: translateY(-6px);
+  }
+
+  .tier-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+
+  .tier-card.bronze::before { background: linear-gradient(90deg, transparent, var(--bronze), transparent); }
+  .tier-card.silver::before { background: linear-gradient(90deg, transparent, var(--silver-medal), transparent); }
+  .tier-card.gold::before { background: linear-gradient(90deg, transparent, var(--gold-medal), transparent); }
+  .tier-card.platinum::before { background: linear-gradient(90deg, transparent, var(--platinum-medal), transparent); }
+
+  .tier-card.bronze:hover { border-color: var(--bronze); }
+  .tier-card.silver:hover { border-color: var(--silver-medal); }
+  .tier-card.gold:hover { border-color: var(--gold-medal); }
+  .tier-card.platinum:hover { border-color: var(--platinum-medal); }
+
+  .tier-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    margin: 0 auto 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+
+  .tier-card.bronze .tier-icon { background: rgba(205, 127, 50, 0.15); color: var(--bronze); border: 1px solid rgba(205, 127, 50, 0.3); }
+  .tier-card.silver .tier-icon { background: rgba(168, 181, 196, 0.15); color: var(--silver-medal); border: 1px solid rgba(168, 181, 196, 0.3); }
+  .tier-card.gold .tier-icon { background: rgba(212, 175, 55, 0.15); color: var(--gold-medal); border: 1px solid rgba(212, 175, 55, 0.3); }
+  .tier-card.platinum .tier-icon { background: rgba(184, 197, 214, 0.15); color: var(--platinum-medal); border: 1px solid rgba(184, 197, 214, 0.3); }
+
+  .tier-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .tier-card.bronze .tier-name { color: var(--bronze); }
+  .tier-card.silver .tier-name { color: var(--silver-medal); }
+  .tier-card.gold .tier-name { color: var(--gold-medal); }
+  .tier-card.platinum .tier-name { color: var(--platinum-medal); }
+
+  .tier-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    color: var(--white);
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+  }
+
+  .tier-desc {
+    font-size: 0.85rem;
+    color: var(--slate);
+    line-height: 1.6;
+  }
+
+  /* === PILLAR CARDS === */
+  .pillar-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin: 2.5rem 0;
+  }
+
+  .pillar-card {
+    background: var(--navy-mid);
+    border: 1px solid rgba(148, 163, 184, 0.08);
+    border-radius: 10px;
+    padding: 1.75rem;
+    transition: border-color 0.3s ease;
+  }
+
+  .pillar-card:hover {
+    border-color: rgba(201, 169, 110, 0.3);
+  }
+
+  .pillar-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: rgba(201, 169, 110, 0.2);
+    margin-bottom: 0.5rem;
+  }
+
+  .pillar-title {
+    font-weight: 600;
+    color: var(--white);
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .pillar-text {
+    font-size: 0.85rem;
+    color: var(--slate);
+    line-height: 1.6;
+  }
+
+  /* === RESULTS === */
+  .results-bar {
+    display: flex;
+    gap: 1px;
+    margin: 3rem 0;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .result-stat {
+    flex: 1;
+    background: var(--navy-mid);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    position: relative;
+    transition: background 0.3s ease;
+  }
+
+  .result-stat:hover {
+    background: var(--navy-light);
+  }
+
+  .result-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 0.25rem;
+  }
+
+  .result-label {
+    font-size: 0.78rem;
+    color: var(--slate);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* === DIVIDER === */
+  .divider {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.2), transparent);
+  }
+
+  .divider-diamond {
+    width: 6px;
+    height: 6px;
+    background: var(--gold);
+    transform: rotate(45deg);
+  }
+
+  /* === QUOTE === */
+  .quote-block {
+    background: linear-gradient(135deg, var(--navy-mid), var(--navy-light));
+    border-left: 3px solid var(--gold);
+    border-radius: 0 10px 10px 0;
+    padding: 2.5rem;
+    margin: 3rem 0;
+    position: relative;
+  }
+
+  .quote-block::before {
+    content: '\201C';
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    color: rgba(201, 169, 110, 0.15);
+    position: absolute;
+    top: 0.5rem;
+    left: 1.5rem;
+    line-height: 1;
+  }
+
+  .quote-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-style: italic;
+    color: var(--platinum);
+    line-height: 1.7;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* === FOOTER === */
+  .footer {
+    text-align: center;
+    padding: 4rem 2rem;
+    border-top: 1px solid rgba(148, 163, 184, 0.08);
+  }
+
+  .footer-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-creds {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--gold-dark);
+    margin-bottom: 1rem;
+  }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1.5rem;
+  }
+
+  .footer-links a {
+    color: var(--slate);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.3s;
+  }
+
+  .footer-links a:hover {
+    color: var(--gold);
+  }
+
+  .footer-date {
+    font-size: 0.75rem;
+    color: rgba(148, 163, 184, 0.4);
+    margin-top: 2rem;
+  }
+
+  /* === ANIMATIONS === */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes pulse-ring {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.05); }
+  }
+
+  @keyframes scroll-pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  .animate-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+  }
+
+  .animate-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 768px) {
+    .tier-grid { grid-template-columns: repeat(2, 1fr); }
+    .pillar-grid { grid-template-columns: 1fr; }
+    .results-bar { flex-direction: column; }
+    .section { padding: 4rem 1.5rem; }
+  }
+
+  @media (max-width: 480px) {
+    .tier-grid { grid-template-columns: 1fr; }
+    .hero-author { flex-direction: column; text-align: center; }
+    .hero-author-info { text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+  </div>
+  <div class="hero-kicker">A Data Governance Methodology</div>
+  <h1>The Seal of <em>Trust</em></h1>
+  <p class="hero-sub">A tiered certification framework that transforms data products from unmanaged liabilities into trusted, governed assets with measurable, defensible quality.</p>
+  <div class="hero-author">
+    <div class="hero-author-dot">PH</div>
+    <div class="hero-author-info">
+      <div class="hero-author-name">Perry Ham, BASc, PMP, CDMP</div>
+      <div class="hero-author-title">Data Governance &amp; Quality Management Professional</div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<div class="divider"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+
+<section class="section animate-in">
+  <div class="section-label">01 &mdash; The Problem</div>
+  <h2>Most organizations govern data reactively, not systematically</h2>
+  <p>Data governance programs frequently stall because they lack a visible, measurable mechanism for stakeholders to understand the quality and trustworthiness of the data they consume. Dashboards proliferate. KPIs are defined. But the fundamental question remains unanswered: <strong style="color: var(--white)">how much should I trust this data?</strong></p>
+  <p>Without a clear answer, business units make one of two choices: they trust everything uncritically, accepting risk they cannot quantify, or they trust nothing, duplicating effort and building shadow systems. Both outcomes erode governance credibility and waste organizational resources.</p>
+  <div class="lead">The Seal of Trust framework was designed to solve this problem by creating a universal, tiered language of data product maturity that any stakeholder can understand at a glance.</div>
+</section>
+
+<!-- FRAMEWORK -->
+<div class="divider"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+
+<section class="section section-wide animate-in">
+  <div class="section-label">02 &mdash; The Framework</div>
+  <h2>Four tiers. One universal language of trust.</h2>
+  <p>Each data product, whether a dashboard, dataset, report, or automated feed, is assessed against defined criteria spanning ownership, documentation, quality measurement, and lifecycle management. Based on the assessment, the product receives a certification tier that communicates its governance maturity to all consumers.</p>
+
+  <div class="tier-grid">
+    <div class="tier-card bronze">
+      <div class="tier-icon">B</div>
+      <div class="tier-name">Bronze</div>
+      <div class="tier-title">Identified</div>
+      <div class="tier-desc">Data product is catalogued with a defined owner and basic metadata. Existence is acknowledged, but quality is unvalidated.</div>
+    </div>
+    <div class="tier-card silver">
+      <div class="tier-icon">S</div>
+      <div class="tier-name">Silver</div>
+      <div class="tier-title">Documented</div>
+      <div class="tier-desc">Lineage, definitions, and business rules are documented. Stakeholders understand what the data represents and where it originates.</div>
+    </div>
+    <div class="tier-card gold">
+      <div class="tier-icon">G</div>
+      <div class="tier-name">Gold</div>
+      <div class="tier-title">Measured</div>
+      <div class="tier-desc">Active quality rules are in place with automated monitoring. Issues are detected, tracked, and remediated through defined processes.</div>
+    </div>
+    <div class="tier-card platinum">
+      <div class="tier-icon">P</div>
+      <div class="tier-name">Platinum</div>
+      <div class="tier-title">Optimized</div>
+      <div class="tier-desc">Continuous improvement is embedded. Quality metrics inform business decisions. The data product is a fully governed, trusted enterprise asset.</div>
+    </div>
+  </div>
+
+  <div class="quote-block">
+    <div class="quote-text">The power of tiered certification is not in the assessment itself, but in the shared vocabulary it creates. When a business leader sees "Gold," they know exactly what that means without reading a 40-page governance policy.</div>
+  </div>
+</section>
+
+<!-- PILLARS -->
+<div class="divider"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+
+<section class="section section-wide animate-in">
+  <div class="section-label">03 &mdash; Assessment Pillars</div>
+  <h2>What gets measured at each tier</h2>
+  <p>Certification is not a subjective judgment. Each tier is evaluated against six foundational pillars, with progressively rigorous expectations as the data product matures through the framework.</p>
+
+  <div class="pillar-grid">
+    <div class="pillar-card">
+      <div class="pillar-num">01</div>
+      <div class="pillar-title">Ownership &amp; Accountability</div>
+      <div class="pillar-text">Every data product has a named data owner with defined responsibilities for quality, access, and lifecycle decisions. Ownership is not optional at any tier.</div>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-num">02</div>
+      <div class="pillar-title">Documentation &amp; Metadata</div>
+      <div class="pillar-text">Business definitions, technical specifications, and contextual metadata are maintained in a central catalog. Consumers can find and understand data without tribal knowledge.</div>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-num">03</div>
+      <div class="pillar-title">Lineage &amp; Traceability</div>
+      <div class="pillar-text">Source-to-consumption data flows are mapped and documented. Transformation logic is transparent and auditable for regulatory and operational confidence.</div>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-num">04</div>
+      <div class="pillar-title">Quality Measurement</div>
+      <div class="pillar-text">Defined quality dimensions (completeness, accuracy, timeliness, consistency, validity, uniqueness) are actively monitored with automated rules and thresholds.</div>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-num">05</div>
+      <div class="pillar-title">Issue Management</div>
+      <div class="pillar-text">Quality defects are logged, triaged, assigned, and remediated through a governed process. Root cause analysis drives systemic improvement, not one-off fixes.</div>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-num">06</div>
+      <div class="pillar-title">Lifecycle Governance</div>
+      <div class="pillar-text">Data products have defined creation, review, and retirement processes. Nothing persists ungoverned. Obsolete assets are decommissioned, not abandoned.</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<div class="divider"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+
+<section class="section animate-in">
+  <div class="section-label">04 &mdash; How It Works</div>
+  <h2>From assessment to certification</h2>
+
+  <h3>Step 1: Inventory &amp; Nomination</h3>
+  <p>Data products are identified, catalogued, and nominated for certification by their owners or by the governance team during enterprise data discovery exercises. Each nominated product enters the assessment pipeline with a baseline metadata record.</p>
+
+  <h3>Step 2: Pillar Assessment</h3>
+  <p>Each product is evaluated against the six pillars using a standardized rubric. Evidence is collected, not assumed. Documentation must exist, quality rules must be running, ownership must be formalized. The assessment produces a score mapped to the four-tier model.</p>
+
+  <h3>Step 3: Certification &amp; Communication</h3>
+  <p>The data product receives its tier designation, which is published in the data catalog and, where applicable, displayed directly on dashboards, reports, or data product landing pages. Stakeholders see the trust level before they consume the data.</p>
+
+  <h3>Step 4: Continuous Reassessment</h3>
+  <p>Certification is not permanent. Products are reassessed on a defined cadence or triggered by material changes (source migration, schema changes, ownership transitions). Tiers can rise or fall based on current evidence, ensuring the framework reflects reality, not history.</p>
+</section>
+
+<!-- RESULTS -->
+<div class="divider"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+
+<section class="section section-wide animate-in">
+  <div class="section-label">05 &mdash; Demonstrated Impact</div>
+  <h2>Results from enterprise deployment</h2>
+  <p>The Seal of Trust framework has been deployed in a large-scale enterprise environment governing operational technology and safety-critical data across multiple business units. The methodology was built from zero infrastructure and produced measurable, auditable results.</p>
+
+  <div class="results-bar">
+    <div class="result-stat">
+      <div class="result-number">1.2 &rarr; 3.4</div>
+      <div class="result-label">Maturity Advancement</div>
+    </div>
+    <div class="result-stat">
+      <div class="result-number">$1.3M</div>
+      <div class="result-label">Documented Value</div>
+    </div>
+    <div class="result-stat">
+      <div class="result-number">71</div>
+      <div class="result-label">KPIs Standardized</div>
+    </div>
+    <div class="result-stat">
+      <div class="result-number">692+</div>
+      <div class="result-label">Tables Governed</div>
+    </div>
+  </div>
+
+  <p>The framework's strongest validation came organically: an independent team within the same enterprise adopted the methodology and published their own derivative certification process without coordination or instruction, demonstrating that the framework's design is intuitive, replicable, and scalable beyond its originating team.</p>
+</section>
+
+<!-- APPLICABILITY -->
+<div class="divider"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+
+<section class="section animate-in">
+  <div class="section-label">06 &mdash; Applicability</div>
+  <h2>Where this framework fits</h2>
+  <p>The Seal of Trust is domain-agnostic by design. It has been applied to operational technology data but is equally applicable to any environment where data products serve business decisions and require governed trust signals.</p>
+
+  <h3>Financial Services &amp; Regulated Industries</h3>
+  <p>Regulatory frameworks like OSFI E-23 (Model Risk Management) and E-21 (Operational Risk) require organizations to demonstrate data quality, lineage, and governance maturity. Tiered certification provides auditable evidence of compliance readiness and a clear maturity roadmap for regulators.</p>
+
+  <h3>Healthcare &amp; Public Sector</h3>
+  <p>Privacy-sensitive environments benefit from the framework's emphasis on ownership, lifecycle governance, and documented handling procedures. Certification tiers communicate data readiness for reporting, analytics, and inter-agency data sharing.</p>
+
+  <h3>Technology &amp; SaaS</h3>
+  <p>Product teams shipping data-driven features need confidence in the datasets powering their models and analytics. The framework integrates into CI/CD pipelines and data platform operations, providing quality gates that scale with engineering velocity.</p>
+</section>
+
+<!-- PRINCIPLES -->
+<div class="divider"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+
+<section class="section animate-in">
+  <div class="section-label">07 &mdash; Design Principles</div>
+  <h2>What makes it work</h2>
+
+  <h3>Visibility over complexity</h3>
+  <p>Governance frameworks fail when they are invisible to the people who need them most. The tiered model succeeds because it is immediately legible to non-technical stakeholders. A business director does not need to understand data quality dimensions to understand what "Silver" means.</p>
+
+  <h3>Evidence over assertion</h3>
+  <p>Certification is earned through demonstrated compliance, not self-reported status. Quality rules must be running. Documentation must exist in the catalog. Ownership must be formalized. The framework does not accept "we plan to" as a substitute for "we have."</p>
+
+  <h3>Progression over perfection</h3>
+  <p>Bronze is not failure. It is the first step. The framework is designed to encourage incremental improvement rather than demand immediate Platinum maturity, which would discourage participation and undermine adoption.</p>
+
+  <h3>Accountability over abstraction</h3>
+  <p>Every data product has a named owner. Every quality issue has an assigned resolver. Every tier has a defined meaning. The framework eliminates ambiguity, which is the primary enemy of governance adoption.</p>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-name">Perry Ham</div>
+  <div class="footer-creds">BASc &bull; PMP &bull; CDMP</div>
+  <div class="footer-links">
+    <a href="https://www.linkedin.com/in/perryham/" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="https://github.com/perryham" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <div class="footer-date">Published April 2026</div>
+</footer>
+
+<script>
+  // Intersection Observer for scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.animate-in').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
